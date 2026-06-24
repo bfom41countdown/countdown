@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown till BFOM 41 Graduation</title>
+    
+    <!-- Importing a fun, rounded Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS for Styling -->
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            /* Pure white background for the whole page */
+            background-color: #ffffff;
+            color: #2f3542;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .main-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Styling for the Logo */
+        .graduation-logo {
+            max-width: 120px; /* Adjust size as needed */
+            height: auto;
+            margin-bottom: 30px; /* Space between logo and header */
+            display: block;
+            /* A subtle shadow to give the peach logo depth on white */
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.15));
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 2.8rem;
+            color: #ff4757; /* Bright, energetic pink/red */
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 900;
+            text-shadow: 2px 2px 0px #ffeaa7; /* Fun yellow shadow */
+        }
+
+        .countdown {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap; /* Good for smaller screens */
+        }
+
+        .time-box {
+            padding: 25px 20px;
+            border-radius: 20px;
+            min-width: 110px;
+            color: white;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        /* Fun hover animation so the boxes pop up */
+        .time-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Individual Happy Colors for each box */
+        .time-box:nth-child(1) { background-color: #ff6b81; } /* Watermelon Pink */
+        .time-box:nth-child(2) { background-color: #1dd1a1; } /* Mint Green */
+        .time-box:nth-child(3) { background-color: #feca57; } /* Sunny Yellow */
+        .time-box:nth-child(4) { background-color: #54a0ff; } /* Sky Blue */
+
+        .time-box span {
+            display: block;
+            font-size: 4.5rem;
+            font-weight: 900;
+            line-height: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .label {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            opacity: 0.95;
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .time-box span { font-size: 3rem; }
+            .time-box { min-width: 80px; padding: 15px 10px; }
+            .label { font-size: 0.9rem; margin-top: 8px; }
+            .graduation-logo { max-width: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HTML Structure -->
+    <div class="main-content">
+        <!-- Logo placed in the top middle -->
+        <img src="LOGO.png" alt="BFOM 41 Graduation Logo" class="graduation-logo">
+
+        <h1>Countdown till BFOM 41 Graduation</h1>
+        
+        <div class="countdown" id="timer-display">
+            <div class="time-box">
+                <span id="days">00</span>
+                <div class="label">Days</div>
+            </div>
+            <div class="time-box">
+                <span id="hours">00</span>
+                <div class="label">Hours</div>
+            </div>
+            <div class="time-box">
+                <span id="minutes">00</span>
+                <div class="label">Minutes</div>
+            </div>
+            <div class="time-box">
+                <span id="seconds">00</span>
+                <div class="label">Seconds</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for the Countdown Logic -->
+    <script>
+        // Set the target date (October 4, 2026 at midnight)
+        const targetDate = new Date("October 4, 2026 00:00:00").getTime();
+
+        // Update the countdown every 1 second
+        const countdownInterval = setInterval(function() {
+            
+            // Get today's date and time
+            const now = new Date().getTime();
+            
+            // Find the distance between now and the target date
+            const distance = targetDate - now;
+            
+            // Time calculations for days, hours, minutes, and seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Display the results in the elements, padding with a '0' if less than 10
+            document.getElementById("days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+            
+            // If the countdown is finished, write some text and stop the timer
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                // Keep the logo when the text changes
+                document.getElementById("timer-display").innerHTML = "<h2 style='color:#ff4757; font-size:3rem; margin: 20px 0;'>HAPPY GRADUATION! 🎉🎓</h2>";
+            }
+        }, 1000); // 1000 milliseconds = 1 second
+    </script>
+
+</body>
+</html>
