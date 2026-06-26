@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
+        /* Smooth transitions for the theme swap */
         body {
             font-family: 'Nunito', sans-serif;
             background-color: #ffffff;
@@ -18,6 +19,7 @@
             height: 100vh;
             margin: 0;
             overflow-x: hidden;
+            transition: background-color 1s ease, color 1s ease;
         }
 
         .main-content {
@@ -27,6 +29,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 10;
         }
 
         .graduation-logo {
@@ -35,6 +39,7 @@
             margin-bottom: 30px;
             display: block;
             filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.15));
+            transition: filter 1s ease;
         }
 
         h1 {
@@ -45,6 +50,7 @@
             text-transform: uppercase;
             font-weight: 900;
             text-shadow: 2px 2px 0px #ffeaa7;
+            transition: color 1s ease, text-shadow 1s ease;
         }
 
         .countdown {
@@ -61,7 +67,7 @@
             min-width: 110px;
             color: white;
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 1s ease, color 1s ease;
             text-align: center;
         }
 
@@ -103,6 +109,7 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
             display: inline-block;
             text-transform: uppercase;
+            transition: background-color 1s ease, color 1s ease;
         }
 
         .passed-days span {
@@ -110,6 +117,63 @@
             font-weight: 900;
             font-size: 1.3rem;
             margin: 0 5px;
+            transition: color 1s ease;
+        }
+
+        /* --- GOLD THEME CLASSES --- */
+        body.gold-theme {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        body.gold-theme h1 {
+            color: #f1c40f;
+            text-shadow: 2px 2px 0px #856a00;
+        }
+
+        body.gold-theme .graduation-logo {
+            filter: drop-shadow(2px 2px 8px rgba(241, 196, 15, 0.4));
+        }
+
+        body.gold-theme .time-box {
+            background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+            color: #1a1a1a;
+            box-shadow: 0 8px 15px rgba(218, 165, 32, 0.3);
+        }
+
+        body.gold-theme .time-box:hover {
+            box-shadow: 0 15px 25px rgba(218, 165, 32, 0.5);
+        }
+
+        body.gold-theme .time-box span {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        body.gold-theme .passed-days {
+            background-color: #2d2d2d;
+            color: #d4af37;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        body.gold-theme .passed-days span {
+            color: #f1c40f;
+        }
+
+        /* --- SPARKLE ANIMATION --- */
+        .sparkle {
+            position: fixed;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #FFD700, 0 0 20px #FFF8DC;
+            animation: fallAndDrift linear forwards;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes fallAndDrift {
+            0% { transform: translate(0, -10vh) scale(0); opacity: 1; }
+            10% { transform: translate(calc(var(--drift) * 0.1), 10vh) scale(1); }
+            100% { transform: translate(var(--drift), 110vh) scale(0); opacity: 0; }
         }
 
         @media (max-width: 600px) {
@@ -148,14 +212,41 @@
             </div>
         </div>
 
-        <div class="passed-days" id="passed-days-display">
-            </div>
+        <div class="passed-days" id="passed-days-display"></div>
 
     </div>
 
     <script>
+        // Target updated to October 5, 2026 00:00:00
         const targetDate = new Date("October 5, 2026 00:00:00").getTime();
         const startDate = new Date("October 1, 2021 00:00:00").getTime();
+        
+        let hasTriggeredGold = false;
+
+        // Function to create the sparkle effect
+        function triggerSparkles() {
+            const numSparkles = 150;
+            for (let i = 0; i < numSparkles; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.classList.add('sparkle');
+                    sparkle.style.left = (Math.random() * 100) + 'vw';
+                    
+                    const size = (Math.random() * 5 + 3);
+                    sparkle.style.width = size + 'px';
+                    sparkle.style.height = size + 'px';
+                    sparkle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    
+                    // Add random horizontal drift to the falling animation
+                    sparkle.style.setProperty('--drift', (Math.random() * 200 - 100) + 'vw');
+                    
+                    document.body.appendChild(sparkle);
+                    
+                    // Cleanup sparkles after they fall
+                    setTimeout(() => { sparkle.remove(); }, 5000);
+                }, i * 30); // Stagger the release
+            }
+        }
 
         const countdownInterval = setInterval(function() {
             
@@ -176,12 +267,18 @@
             document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
             document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
             
-            // التعديل تم هنا 
             document.getElementById("passed-days-display").innerHTML = `DAY <span>${passedDays}</span> IN BFOM`;
+
+            // Trigger the Gold theme and Sparkles when entering 99 days
+            if (days < 100 && !hasTriggeredGold && distance > 0) {
+                hasTriggeredGold = true;
+                document.body.classList.add('gold-theme');
+                triggerSparkles();
+            }
 
             if (distance < 0) {
                 clearInterval(countdownInterval);
-                document.getElementById("timer-display").innerHTML = "<h2 style='color:#ff4757; font-size:3rem; margin: 20px 0;'>HAPPY GRADUATION! 🎉🎓</h2>";
+                document.getElementById("timer-display").innerHTML = "<h2 style='color:#f1c40f; font-size:3rem; margin: 20px 0;'>HAPPY GRADUATION! 🎉🎓</h2>";
             }
         }, 1000); 
     </script>
